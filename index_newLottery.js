@@ -27,34 +27,37 @@ log ('Habilitando la gestión de eventos'.cyan)
 let eventUser = contract.newLotteryEvent()
 
 eventUser.watch(function(err,res){
-	if(!err)
-	{
-		log(res.args.msg.magenta+res.args.hist)
-	}
+        if(!err)
+        {
+                log(res.args.msg.magenta+res.args.hist)
+        }
 })
 
 log ('El owner del contrato es: '+contract.owner().cyan)
 
 /*
- * Se crea la transacción para la ejecución manual de la lotería
+ * Se crea la transacción para la creación de la nueva lotería
  */
-
-log ('Creando la transacción de ejecución manual de la lotería'.cyan)
-var txRaw_execute = {
+log ('Creando la transacción de creación de la nueva lotería'.cyan)
+var txRaw = {
 nonce: web3.eth.getTransactionCount(address),
 gasPrice: "0x174876e800",
 gasLimit: 3000000,
 from: address,
 to: contract.address,
 value: 0,
-data: contract.execute.getData()
+data: contract.newLottery.getData()
 }
 
 log ('Firmando la transacción'.cyan)
-var tx_execute = new EthereumTx(txRaw_execute)
-tx_execute.sign(Buffer.from(private2, 'hex'))
-var serializedTx_execute = tx_execute.serialize()
+var tx = new EthereumTx(txRaw)
 
-var signData_execute = serializedTx_execute.toString('hex')
+tx.sign(Buffer.from(private2, 'hex'))
 
-web3.eth.sendRawTransaction('0x' +signData_execute)
+var serializedTx = tx.serialize()
+
+var signData = serializedTx.toString('hex')
+
+web3.eth.sendRawTransaction('0x' +signData)
+
+log ('Finalizado el proceso'.red)
